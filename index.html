@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stockfish</title>
+    <style></style>
+  </head>
+  <body>
+    <h1>Open your console..</h1>
+    <script type="module">
+      import stockfish from "./sf171-79.js";
+
+      async function init() {
+        /**
+         * @typedef {Object} StockfishWeb
+         * @property {function(string): void} uci - Send UCI command, receive async response via listen
+         * @property {function(Uint8Array, number=): void} setNnueBuffer - Load NNUE as buffer (index optional)
+         * @property {function(number=): string} getRecommendedNnue - Returns a bare filename (index optional)
+         * @property {function(string): void} listen - Attach listener here
+         * @property {function(string): void} onError - Attach error handler here
+         */
+
+        /**
+         * @type {StockfishWeb}
+         */
+        const engine = await stockfish();
+
+        engine.listen = (data) => {
+          console.log("stdin", data);
+        };
+
+        engine.onError = (data) => {
+          console.log("stderr", data);
+        };
+
+        const nnueUrl = (name) => `/${name}`;
+
+        const networks = [
+          await fetch(nnueUrl("nn-1c0000000000.nnue")),
+          await fetch(nnueUrl("nn-37f18f62d772.nnue")),
+        ];
+
+        for (let index = 0; index < networks.length; index++) {
+          const element = networks[index];
+          const buf = await element.arrayBuffer();
+          engine.setNnueBuffer(new Uint8Array(buf), index);
+        }
+
+        engine.uci("bench");
+      }
+
+      init();
+    </script>
+  </body>
+</html>
