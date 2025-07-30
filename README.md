@@ -18,6 +18,14 @@ npm install
 This repo includes the NNUE files for Stockfish 17.1.
 If you want to use a different version, you will have to download the NNUE files yourself.
 
+## Test
+
+```bash
+node server.js
+```
+
+Open your browser and go to <http://localhost:8080> and view the console to see stockfish's output.
+
 ## Usage in your project
 
 You will probably want to directly include the stockfish-web npm package in your project
