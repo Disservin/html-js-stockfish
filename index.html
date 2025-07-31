@@ -27,7 +27,7 @@
         const engine = await stockfish();
 
         engine.listen = (data) => {
-          console.log("stdin", data);
+          console.log("stdout", data);
         };
 
         engine.onError = (data) => {
